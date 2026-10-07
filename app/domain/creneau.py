@@ -10,7 +10,10 @@ def en_utc_naif(moment: datetime) -> datetime:
     """Convertit en UTC sans fuseau ; une date sans fuseau est considérée UTC."""
     if moment.tzinfo is None:
         return moment
-    return moment.astimezone(timezone.utc).replace(tzinfo=None)
+    try:
+        return moment.astimezone(timezone.utc).replace(tzinfo=None)
+    except OverflowError:
+        raise CreneauInvalide("Date hors limites.") from None
 
 
 def maintenant_utc() -> datetime:

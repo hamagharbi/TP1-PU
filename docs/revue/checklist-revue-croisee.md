@@ -10,7 +10,7 @@
 
 ## Architecture en couches
 - [ ] Le contrôleur (`app/api`) ne contient aucune règle métier.
-- [ ] Le service ne dépend que d'interfaces (`app/services/ports.py`), pas de SQLAlchemy.
+- [ ] Le service ne dépend que des ports (`app/services/ports.py`) et des entités `app/models.py` : aucune session ni requête SQLAlchemy.
 - [ ] Le domaine (`app/domain`) n'importe ni FastAPI ni SQLAlchemy.
 
 ## Risque technique : conflits

@@ -132,6 +132,8 @@ SqlClientRepository ..|> ClientRepository
 SqlVehiculeRepository ..|> VehiculeRepository
 SqlReservationRepository ..|> ReservationRepository
 SqlReservationRepository ..> Reservation
+ReservationService ..> Reservation : crée
+ReservationRepository ..> Reservation
 ErreurMetier <|-- CreneauInvalide
 ErreurMetier <|-- CreneauDansLePasse
 ErreurMetier <|-- ClientIntrouvable
