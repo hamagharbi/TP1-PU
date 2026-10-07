@@ -1,0 +1,45 @@
+@startuml sequence-uc2
+title UC2 Réserver un véhicule — scénario nominal (et alternatives)
+autonumber
+
+actor Client
+participant "ReservationsRouter" as API
+participant "ReservationService" as S
+participant "Creneau" as C
+participant "SqlUniteDeTravail" as UOW
+participant "SqlVehiculeRepository" as RV
+participant "SqlReservationRepository" as RR
+database "SQLite" as DB
+
+Client -> API : POST /reservations {client_id, vehicule_id, debut, fin}
+API -> S : reserver(client_id, vehicule_id, debut, fin)
+S -> C ** : Creneau(debut, fin)
+note right of C : R1 : debut < fin, durée ≤ 24 h\n(dates converties en UTC)
+S -> S : R2 : debut > horloge()
+S -> UOW : with (ouvre une session)
+UOW -> DB : BEGIN IMMEDIATE (verrou d'écriture)
+S -> UOW : clients.obtenir(client_id)
+UOW -> DB : SELECT client
+S -> RV : obtenir(vehicule_id)
+RV -> DB : SELECT véhicule
+RV --> S : vehicule (R3, R4 : non EN_MAINTENANCE)
+S -> RR : existe_chevauchement_vehicule(vehicule_id, creneau)
+RR -> DB : SELECT … WHERE debut < :fin AND fin > :debut AND statut = CONFIRMEE
+RR --> S : false (R5)
+S -> RR : existe_chevauchement_client(client_id, creneau)
+RR --> S : false (R6)
+S -> S : montant_estime_centimes(vehicule.type, creneau)
+S -> RR : ajouter(reservation CONFIRMEE)
+RR -> DB : INSERT reservation
+S -> UOW : valider()
+UOW -> DB : COMMIT
+S --> API : Reservation
+API --> Client : 201 Created {id, statut: CONFIRMEE, montant_estime_centimes}
+
+alt 5a — créneau déjà réservé
+  RR --> S : true
+  S --> API : ConflitReservation
+  UOW -> DB : ROLLBACK
+  API --> Client : 409 {erreur: CONFLIT_RESERVATION}
+end
+@enduml

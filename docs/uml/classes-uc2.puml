@@ -1,0 +1,145 @@
+@startuml classes-uc2
+!pragma layout smetana
+skinparam classAttributeIconSize 0
+title UC2 Réserver un véhicule — diagramme de classes
+
+package "api (contrôleur)" {
+  class ReservationsRouter <<controller>> {
+    +reserver(demande: DemandeReservation): ReservationLue
+    +obtenir(reservation_id: int): ReservationLue
+  }
+  class DemandeReservation <<DTO>> {
+    +client_id: int
+    +vehicule_id: int
+    +debut: datetime
+    +fin: datetime
+  }
+  class ReservationLue <<DTO>> {
+    +id: int
+    +client_id: int
+    +vehicule_id: int
+    +debut: datetime
+    +fin: datetime
+    +statut: StatutReservation
+    +montant_estime_centimes: int
+  }
+}
+
+package "services" {
+  class ReservationService {
+    -uow: UniteDeTravail
+    -horloge: () -> datetime
+    +reserver(client_id, vehicule_id, debut, fin): Reservation
+    +obtenir(reservation_id): Reservation
+  }
+  interface UniteDeTravail {
+    +clients: ClientRepository
+    +vehicules: VehiculeRepository
+    +reservations: ReservationRepository
+    +valider()
+  }
+  interface ClientRepository {
+    +obtenir(id): Client
+  }
+  interface VehiculeRepository {
+    +obtenir(id): Vehicule
+  }
+  interface ReservationRepository {
+    +ajouter(r: Reservation): Reservation
+    +obtenir(id): Reservation
+    +existe_chevauchement_vehicule(vehicule_id, creneau): bool
+    +existe_chevauchement_client(client_id, creneau): bool
+  }
+}
+
+package "domain (métier)" {
+  class Creneau <<value object>> {
+    +debut: datetime
+    +fin: datetime
+    +duree(): timedelta
+    +chevauche(autre: Creneau): bool
+  }
+  class Tarif <<module tarif>> {
+    +montant_estime_centimes(type: TypeVehicule, creneau: Creneau): int
+  }
+  class ErreurMetier {
+    +code: str
+    +http_status: int
+    +message: str
+  }
+  class CreneauInvalide
+  class CreneauDansLePasse
+  class ClientIntrouvable
+  class VehiculeIntrouvable
+  class ReservationIntrouvable
+  class VehiculeIndisponible
+  class ConflitReservation
+  class ConflitClient
+  enum TypeVehicule {
+    VELO
+    TROTTINETTE
+  }
+  enum EtatVehicule {
+    DISPONIBLE
+    EN_MAINTENANCE
+  }
+  enum StatutReservation {
+    CONFIRMEE
+    ANNULEE
+  }
+}
+
+package "repositories (accès aux données)" {
+  class SqlUniteDeTravail
+  class SqlClientRepository
+  class SqlVehiculeRepository
+  class SqlReservationRepository
+}
+
+package "models (entités persistantes)" {
+  class Client {
+    +id: int
+    +nom: str
+    +email: str
+  }
+  class Vehicule {
+    +id: int
+    +type: TypeVehicule
+    +station: str
+    +etat: EtatVehicule
+  }
+  class Reservation {
+    +id: int
+    +debut: datetime
+    +fin: datetime
+    +statut: StatutReservation
+    +montant_estime_centimes: int
+  }
+}
+
+ReservationsRouter ..> DemandeReservation
+ReservationsRouter ..> ReservationLue
+ReservationsRouter --> ReservationService
+ReservationService --> UniteDeTravail
+ReservationService ..> Creneau
+ReservationService ..> Tarif
+ReservationService ..> ErreurMetier
+UniteDeTravail o-- ClientRepository
+UniteDeTravail o-- VehiculeRepository
+UniteDeTravail o-- ReservationRepository
+SqlUniteDeTravail ..|> UniteDeTravail
+SqlClientRepository ..|> ClientRepository
+SqlVehiculeRepository ..|> VehiculeRepository
+SqlReservationRepository ..|> ReservationRepository
+SqlReservationRepository ..> Reservation
+ErreurMetier <|-- CreneauInvalide
+ErreurMetier <|-- CreneauDansLePasse
+ErreurMetier <|-- ClientIntrouvable
+ErreurMetier <|-- VehiculeIntrouvable
+ErreurMetier <|-- ReservationIntrouvable
+ErreurMetier <|-- VehiculeIndisponible
+ErreurMetier <|-- ConflitReservation
+ErreurMetier <|-- ConflitClient
+Client "1" -- "*" Reservation
+Vehicule "1" -- "*" Reservation
+@enduml
