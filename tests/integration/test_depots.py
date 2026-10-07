@@ -35,7 +35,9 @@ def session(tmp_path):
 
 
 def _reservation(statut: StatutReservation) -> Reservation:
-    return Reservation(client_id=1, vehicule_id=1, debut=h(10), fin=h(12), statut=statut)
+    return Reservation(
+        client_id=1, vehicule_id=1, debut=h(10), fin=h(12), statut=statut, montant_estime_centimes=400
+    )
 
 
 def test_obtenir_client_et_vehicule(session):
@@ -63,3 +65,11 @@ def test_ignore_reservation_annulee(session):
     depot = SqlReservationRepository(session)
     depot.ajouter(_reservation(StatutReservation.ANNULEE))
     assert not depot.existe_chevauchement_vehicule(1, Creneau(h(10), h(12)))
+
+
+def test_detecte_chevauchement_pour_le_client(session):
+    depot = SqlReservationRepository(session)
+    depot.ajouter(_reservation(StatutReservation.CONFIRMEE))
+    assert depot.existe_chevauchement_client(1, Creneau(h(11), h(13)))
+    assert not depot.existe_chevauchement_client(1, Creneau(h(12), h(13)))
+    assert not depot.existe_chevauchement_client(2, Creneau(h(11), h(13)))

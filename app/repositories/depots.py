@@ -35,10 +35,16 @@ class SqlReservationRepository:
         return self._session.get(Reservation, reservation_id)
 
     def existe_chevauchement_vehicule(self, vehicule_id: int, creneau: Creneau) -> bool:
+        return self._existe_chevauchement(Reservation.vehicule_id == vehicule_id, creneau)
+
+    def existe_chevauchement_client(self, client_id: int, creneau: Creneau) -> bool:
+        return self._existe_chevauchement(Reservation.client_id == client_id, creneau)
+
+    def _existe_chevauchement(self, critere, creneau: Creneau) -> bool:
         requete = (
             select(Reservation.id)
             .where(
-                Reservation.vehicule_id == vehicule_id,
+                critere,
                 Reservation.statut == StatutReservation.CONFIRMEE,
                 Reservation.debut < creneau.fin,
                 Reservation.fin > creneau.debut,

@@ -37,3 +37,4 @@ class Reservation(Base):
     debut: Mapped[datetime]
     fin: Mapped[datetime]
     statut: Mapped[StatutReservation]
+    montant_estime_centimes: Mapped[int]
