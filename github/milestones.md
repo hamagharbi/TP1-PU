@@ -2,8 +2,8 @@
 
 | Milestone | Jalon | Tag | Tickets | État |
 |---|---|---|---|---|
-| Lancement | LCO | `v0.0-lancement` | #7 | à fermer |
-| Élaboration | LCA | `v0.1-elaboration` | #8 | ouvert |
+| Lancement | LCO | `v0.0-lancement` | #7 | fermé |
+| Élaboration | LCA | `v0.1-elaboration` | #8 | fermé |
 | Construction | IOC | `v0.2-construction` | #1 à #6 | ouvert |
 | Transition | PR | `v1.0-transition` | #9 | ouvert |
 
