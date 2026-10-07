@@ -31,7 +31,7 @@ Documentation interactive : http://127.0.0.1:8000/docs
 ## Architecture
 
 `app/api` (contrôleur) → `app/services` (service UC) → `app/repositories` (accès aux données, SQLite) ;
-`app/domain` contient le métier pur (créneau, erreurs).
+`app/domain` contient le métier pur (créneau, tarif, énumérations, erreurs) ; `app/models.py` les entités persistantes.
 
 ## API
 
@@ -40,7 +40,8 @@ Documentation interactive : http://127.0.0.1:8000/docs
 | POST | `/reservations` `{client_id, vehicule_id, debut, fin}` | 201, 404, 409, 422 |
 | GET | `/reservations/{id}` | 200, 404 |
 
-Erreurs métier : `{"erreur": "<CODE>", "message": "..."}`. Montants en centimes (`montant_estime_centimes`).
+Erreurs métier : `{"erreur": "<CODE>", "message": "..."}` ; erreurs de format (validation) : `{"detail": [...]}` (422).
+Montants en centimes (`montant_estime_centimes`). Dates : une date reçue sans fuseau est considérée UTC ; les réponses sont en UTC (suffixe `Z`).
 
 ## Limites connues
 

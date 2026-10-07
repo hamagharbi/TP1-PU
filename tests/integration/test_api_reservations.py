@@ -26,8 +26,8 @@ def test_scenario_nominal_reserver_puis_consulter(client_http):
         "id": 1,
         "client_id": 1,
         "vehicule_id": 2,
-        "debut": "2026-10-08T10:00:00",
-        "fin": "2026-10-08T11:30:00",
+        "debut": "2026-10-08T10:00:00Z",
+        "fin": "2026-10-08T11:30:00Z",
         "statut": "CONFIRMEE",
         "montant_estime_centimes": 600,
     }
@@ -64,7 +64,7 @@ def test_date_avec_fuseau_convertie_en_utc_et_conflit_detecte(client_http):
         json={"client_id": 1, "vehicule_id": 1, "debut": "2026-10-08T10:00:00+02:00", "fin": "2026-10-08T12:00:00+02:00"},
     )
     assert reponse.status_code == 201
-    assert reponse.json()["debut"] == "2026-10-08T08:00:00"
+    assert reponse.json()["debut"] == "2026-10-08T08:00:00Z"
 
     conflit = client_http.post(
         "/reservations",
@@ -72,3 +72,21 @@ def test_date_avec_fuseau_convertie_en_utc_et_conflit_detecte(client_http):
     )
     assert conflit.status_code == 409
     assert conflit.json()["erreur"] == "CONFLIT_RESERVATION"
+
+
+def test_identifiants_hors_limites_refuses_sans_erreur_serveur(client_http):
+    trop_grand = 2**63
+    reponse = client_http.post(
+        "/reservations", json={"client_id": trop_grand, "vehicule_id": 1, **CRENEAU_DEMAIN}
+    )
+    assert reponse.status_code == 422
+    assert client_http.get(f"/reservations/{trop_grand}").status_code == 422
+
+
+def test_date_extreme_avec_fuseau_refusee_sans_erreur_serveur(client_http):
+    reponse = client_http.post(
+        "/reservations",
+        json={"client_id": 1, "vehicule_id": 1, "debut": "9999-12-31T22:00:00-05:00", "fin": "9999-12-31T23:00:00-05:00"},
+    )
+    assert reponse.status_code == 422
+    assert reponse.json()["erreur"] == "CRENEAU_INVALIDE"
