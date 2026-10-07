@@ -116,7 +116,7 @@ app/ (code), tests/, .github/workflows/ci.yml, requirements.txt, pyproject.toml,
 
 - `Client(id, nom, email)`
 - `Vehicule(id, type: VELO|TROTTINETTE, station, etat: DISPONIBLE|EN_MAINTENANCE)`
-- `Reservation(id, client_id, vehicule_id, debut, fin, statut: CONFIRMEE|ANNULEE, montant_estime)`
+- `Reservation(id, client_id, vehicule_id, debut, fin, statut: CONFIRMEE|ANNULEE, montant_estime_centimes)`
 
 Données de démonstration via `python -m app.seed`.
 
@@ -139,6 +139,7 @@ Données de démonstration via `python -m app.seed`.
 Chevauchement : `a.debut < b.fin and b.debut < a.fin` (créneaux contigus = pas de conflit).
 
 Montant estimé : vélo 2 €/h, trottinette 3 €/h, heure entamée due (`ceil(durée / 1 h) * tarif`).
+Stocké et exposé en centimes entiers (`montant_estime_centimes`).
 
 ### 4.4 Concurrence (risque technique)
 

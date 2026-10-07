@@ -27,3 +27,23 @@ class VehiculeIntrouvable(ErreurMetier):
 class ConflitReservation(ErreurMetier):
     code = "CONFLIT_RESERVATION"
     http_status = 409
+
+
+class CreneauDansLePasse(ErreurMetier):
+    code = "CRENEAU_DANS_LE_PASSE"
+    http_status = 422
+
+
+class ReservationIntrouvable(ErreurMetier):
+    code = "RESERVATION_INTROUVABLE"
+    http_status = 404
+
+
+class VehiculeIndisponible(ErreurMetier):
+    code = "VEHICULE_INDISPONIBLE"
+    http_status = 409
+
+
+class ConflitClient(ErreurMetier):
+    code = "CONFLIT_CLIENT"
+    http_status = 409

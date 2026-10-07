@@ -3,11 +3,12 @@ from fastapi.testclient import TestClient
 
 from app.main import creer_app
 from app.seed import peupler
+from tests.constantes import MAINTENANT
 
 
 @pytest.fixture
 def app(tmp_path):
-    application = creer_app(f"sqlite:///{tmp_path / 'test.db'}")
+    application = creer_app(f"sqlite:///{tmp_path / 'test.db'}", horloge=lambda: MAINTENANT)
     peupler(application.state.fabrique_sessions)
     yield application
     application.state.engine.dispose()

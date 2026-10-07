@@ -19,6 +19,8 @@ class ReservationRepository(Protocol):
 
     def existe_chevauchement_vehicule(self, vehicule_id: int, creneau: Creneau) -> bool: ...
 
+    def existe_chevauchement_client(self, client_id: int, creneau: Creneau) -> bool: ...
+
 
 class UniteDeTravail(Protocol):
     clients: ClientRepository
