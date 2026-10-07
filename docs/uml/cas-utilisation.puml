@@ -1,0 +1,33 @@
+@startuml cas-utilisation
+!pragma layout smetana
+left to right direction
+skinparam packageStyle rectangle
+title Location de vélos et trottinettes — cas d'utilisation
+
+actor Client
+actor "Opérateur de flotte" as Operateur
+actor "Passerelle de paiement" as Passerelle <<système externe>>
+
+rectangle "Système de location" {
+  usecase "UC1 Consulter les\nvéhicules disponibles" as UC1
+  usecase "UC2 Réserver un véhicule" as UC2 #FFDDDD
+  usecase "UC3 Payer la location" as UC3
+  usecase "UC4 Annuler une réservation" as UC4
+  usecase "UC5 Restituer le véhicule" as UC5
+  usecase "UC6 Gérer la flotte" as UC6
+}
+
+Client --> UC1
+Client --> UC2
+Client --> UC3
+Client --> UC4
+Client --> UC5
+Operateur --> UC6
+UC3 --> Passerelle
+UC5 ..> UC3 : <<include>>
+
+note right of UC2
+  UC à risque technique :
+  conflits de réservation
+end note
+@enduml
