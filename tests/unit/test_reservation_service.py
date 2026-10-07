@@ -15,9 +15,9 @@ from app.domain.erreurs import (
 )
 from app.models import Client, Reservation, Vehicule
 from app.services.reservation_service import ReservationService
+from tests.constantes import MAINTENANT
 from tests.fakes import FausseUniteDeTravail
 
-MAINTENANT = datetime(2026, 10, 7, 8, 0)
 VELO, TROTTINETTE, EN_PANNE = 1, 2, 3
 ALICE, BOB = 1, 2
 
