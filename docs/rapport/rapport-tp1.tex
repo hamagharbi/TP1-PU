@@ -57,7 +57,7 @@
   comment=[l]{\#},
 }
 
-\title{\textbf{TP1 -- Processus unifié et approches agiles}\\[4pt]
+\title{\textbf{TP1 : Processus unifié et approches agiles}\\[4pt]
 \large Système de location de vélos et trottinettes}
 \author{Équipe : \dots}
 \date{7 octobre 2026}
@@ -67,15 +67,13 @@
 \maketitle
 
 \begin{abstract}
-Ce rapport présente la démarche suivie pour le TP1 : choix d'un petit système
-comportant six cas d'utilisation (UC), dont un à risque technique, rédaction de la
-vision, priorisation des UC, planification selon le Processus Unifié (UP), puis
-réalisation de la phase d'\emph{Élaboration} (architecture de base exécutable,
-jalon \texttt{v0.1-elaboration}) et de la phase de \emph{Construction} de l'UC à
-risque \og Réserver un véhicule \fg{} (diagrammes UML, implémentation en couches,
-tests unitaires et d'intégration, préparation de la revue croisée).
-La chaîne de traçabilité \emph{UC $\rightarrow$ ticket $\rightarrow$ branche
-$\rightarrow$ classes $\rightarrow$ tests} est respectée de bout en bout.
+Nous avons choisi un système de location de vélos et de trottinettes à six cas
+d'utilisation (UC). Le plus risqué, \og Réserver un véhicule \fg{}, doit empêcher
+deux clients de réserver le même véhicule sur des créneaux qui se chevauchent.
+Le rapport suit l'ordre de l'énoncé. Il commence par le cadrage (vision,
+priorisation, plan des itérations). Il décrit ensuite l'Élaboration, qui se termine
+sur une première route exécutable et le tag \texttt{v0.1-elaboration}, puis la
+Construction de cet UC : diagrammes UML, code en couches, 44 tests.
 \end{abstract}
 
 \tableofcontents
@@ -85,10 +83,10 @@ $\rightarrow$ classes $\rightarrow$ tests} est respectée de bout en bout.
 \section{Choix du système}
 % ===============================================================
 
-Le système retenu est une \textbf{application de location de vélos et de
-trottinettes} en stations fixes. Il compte six cas d'utilisation, dont un à
-risque technique : \textbf{UC2 -- Réserver un véhicule}, exposé aux
-\emph{conflits de réservation} (chevauchement de créneaux et accès concurrents).
+Le système gère la location de vélos et de trottinettes en stations fixes. Il
+compte six cas d'utilisation. L'UC à risque technique est UC2, Réserver un
+véhicule : deux demandes peuvent viser le même véhicule sur des créneaux qui se
+chevauchent, parfois au même instant.
 
 \paragraph{Choix techniques.}
 \begin{itemize}
@@ -145,7 +143,7 @@ Passerelle de paiement & secondaire (système externe) & autorise et capture les
 \textbf{N\textsuperscript{o}} & \textbf{Cas d'utilisation} & \textbf{Acteur(s)} & \textbf{Description} \\
 \midrule
 UC1 & Consulter les véhicules disponibles & Client & lister les véhicules libres d'une station sur un créneau \\
-UC2 & Réserver un véhicule & Client & bloquer un véhicule sur un créneau --- \textbf{UC à risque technique : conflits de réservation} \\
+UC2 & Réserver un véhicule & Client & bloquer un véhicule sur un créneau (UC à risque : conflits de réservation) \\
 UC3 & Payer la location & Client, Passerelle & régler le montant via la passerelle externe \\
 UC4 & Annuler une réservation & Client & libérer un créneau réservé \\
 UC5 & Restituer le véhicule & Client & clore la location, calculer le prix final (inclut UC3) \\
@@ -159,9 +157,8 @@ UC6 & Gérer la flotte & Opérateur & ajouter, retirer, mettre en maintenance un
 \section{Priorisation des UC (question 3)}
 % ===============================================================
 
-Chaque UC est noté de 1 (faible) à 3 (fort) selon trois critères : la
-\textbf{valeur métier} (V), le \textbf{risque} (R) et l'\textbf{impact sur
-l'architecture} (A).
+Chaque UC reçoit une note de 1 (faible) à 3 (fort) pour la valeur métier (V), le
+risque (R) et l'impact sur l'architecture (A).
 
 \begin{table}[H]
 \centering
@@ -181,12 +178,11 @@ UC4 Annuler une réservation       & 2 & 1 & 1 & 4 & It3 \\
 \end{table}
 
 \paragraph{UC à traiter en premier.}
-\textbf{UC2} obtient le score maximal sur les trois critères : il fixe le modèle de
-données, la gestion transactionnelle et la stratégie anti-conflit, sur lesquels
-reposent tous les autres UC. Conformément à l'UP (développement piloté par les
-risques et centré sur l'architecture), il est traité dès l'Élaboration.
-\textbf{UC3} vient ensuite, en raison du risque lié à l'intégration d'un système
-externe.
+UC2 a la note maximale sur les trois critères. C'est lui qui fixe le modèle de
+données, la gestion des transactions et la parade aux conflits, et les autres UC
+s'appuient dessus. L'UP demande de traiter d'abord ce qui est risqué et structurant
+pour l'architecture : UC2 passe donc en Élaboration. UC3 suit, parce qu'il dépend
+d'un système externe, la passerelle de paiement.
 
 % ===============================================================
 \section{Planification : itérations, phases et jalons (question 4)}
@@ -198,9 +194,9 @@ externe.
 \toprule
 \textbf{Phase} & \textbf{Itér.} & \textbf{Contenu} & \textbf{Jalon} & \textbf{Tag} \\
 \midrule
-Lancement & --- & vision, acteurs, UC, priorisation, plan & LCO & \texttt{v0.0-lancement} \\
+Lancement & cadrage & vision, acteurs, UC, priorisation, plan & LCO & \texttt{v0.0-lancement} \\
 Élaboration & It1 & architecture de base exécutable : \texttt{POST /reservations} de bout en bout (UC2), CI verte & LCA & \texttt{v0.1-elaboration} \\
-Construction & It2 & UC2 complet (règles, alternatives, concurrence), UC3, UC5 & --- & --- \\
+Construction & It2 & UC2 complet (règles, alternatives, concurrence), UC3, UC5 & aucun & aucun \\
 Construction & It3 & UC4, UC6 & IOC & \texttt{v0.2-construction} \\
 Transition & fin It3 & revue croisée, recette, documentation de déploiement & PR & \texttt{v1.0-transition} \\
 \bottomrule
@@ -228,16 +224,17 @@ Transition & fin It3 & revue croisée, recette, documentation de déploiement & 
 \end{itemize}
 
 % ===============================================================
-\section{Partie 1 -- Élaboration}
+\section{Partie 1 : Élaboration}
 % ===============================================================
 
 \subsection{Dépôt, tableau de bord, tickets, milestones, branches et tags}
 
-Le dépôt Git est initialisé localement ; sa publication sur GitHub est automatisée
-par le script \texttt{github/setup-github.sh}, à lancer une fois le dépôt distant créé.
+Le dépôt Git existe en local. Le script \texttt{github/setup-github.sh} le publie
+sur GitHub une fois le dépôt distant créé : il crée les milestones, les tickets et
+le tableau de bord, puis pousse les branches et les tags.
 
-\paragraph{Tickets.} Chaque UC est saisi comme un ticket (fichiers
-\texttt{github/issues/*.md}), complété par un ticket par livrable de phase :
+\paragraph{Tickets.} Chaque UC a son ticket (fichiers \texttt{github/issues/*.md}).
+Trois tickets de plus suivent les livrables de phase :
 
 \begin{table}[H]
 \centering
@@ -246,20 +243,20 @@ par le script \texttt{github/setup-github.sh}, à lancer une fois le dépôt dis
 \textbf{Ticket} & \textbf{Titre} & \textbf{Milestone} \\
 \midrule
 \#1 à \#6 & UC1 à UC6 & Construction \\
-\#7 & Lancement --- vision, UC, priorisation, plan & Lancement \\
-\#8 & Élaboration --- architecture de base exécutable (UC2) & Élaboration \\
-\#9 & Transition --- revue croisée et livraison & Transition \\
+\#7 & Lancement : vision, UC, priorisation, plan & Lancement \\
+\#8 & Élaboration : architecture de base exécutable (UC2) & Élaboration \\
+\#9 & Transition : revue croisée et livraison & Transition \\
 \bottomrule
 \end{tabular}
 \caption{Tickets et milestones}
 \end{table}
 
-\paragraph{Milestones.} Les quatre milestones correspondent aux quatre phases UP :
-Lancement, Élaboration, Construction, Transition. Les labels utilisés sont
-\texttt{cas-utilisation}, \texttt{risque-technique} et \texttt{phase}.
+\paragraph{Milestones.} Un milestone par phase UP : Lancement, Élaboration,
+Construction, Transition. Les tickets portent les labels \texttt{cas-utilisation},
+\texttt{risque-technique} ou \texttt{phase}.
 
-\paragraph{Tableau de bord.} Un \emph{GitHub Project} \og Location vélos --- TP1 \fg{}
-est créé par le script et reçoit tous les tickets.
+\paragraph{Tableau de bord.} Le script crée un \emph{GitHub Project} et y range
+tous les tickets.
 
 \paragraph{Branches.} Chaque UC possède sa branche :
 \begin{itemize}
@@ -271,13 +268,13 @@ est créé par le script et reçoit tous les tickets.
   \item \texttt{uc6-gerer-flotte}
 \end{itemize}
 
-\paragraph{Tags.} Les jalons de phase sont des tags Git annotés :
-\texttt{v0.0-lancement} (LCO) et \texttt{v0.1-elaboration} (LCA) sont posés ;
-\texttt{v0.2-construction} et \texttt{v1.0-transition} le seront aux jalons suivants.
+\paragraph{Tags.} Chaque jalon de phase est un tag Git annoté. Nous avons posé
+\texttt{v0.0-lancement} (LCO) et \texttt{v0.1-elaboration} (LCA) ;
+\texttt{v0.2-construction} et \texttt{v1.0-transition} viendront aux jalons suivants.
 
 \subsection{Diagramme de cas d'utilisation (PlantUML)}
 
-Le diagramme est versionné dans \texttt{docs/uml/cas-utilisation.puml}.
+Source : \texttt{docs/uml/cas-utilisation.puml}.
 
 \begin{figure}[H]
 \centering
@@ -287,7 +284,7 @@ Le diagramme est versionné dans \texttt{docs/uml/cas-utilisation.puml}.
 
 \subsection{Architecture de base exécutable}
 
-L'architecture est organisée en couches :
+Le code est découpé en quatre couches :
 
 \begin{table}[H]
 \centering
@@ -304,18 +301,18 @@ Accès aux données & \texttt{app/repositories/}, \texttt{app/db.py}, \texttt{ap
 \caption{Architecture en couches}
 \end{table}
 
-\paragraph{Route de bout en bout pour l'UC à risque.}
-\texttt{POST /reservations} traverse les trois couches : le contrôleur reçoit la
-demande, le service \texttt{ReservationService} vérifie l'existence du client et du
-véhicule puis l'absence de chevauchement, et le dépôt SQL enregistre la réservation.
+\paragraph{Route de l'UC à risque.}
+\texttt{POST /reservations} passe par toutes les couches. Le contrôleur reçoit la
+demande. \texttt{ReservationService} vérifie que le client et le véhicule existent,
+puis que le créneau est libre. Le dépôt SQL enregistre la réservation.
 
 \paragraph{Traitement du risque technique.}
-La vérification du chevauchement et l'insertion sont exécutées dans une même
-transaction ouverte par \texttt{BEGIN IMMEDIATE}, qui prend le verrou d'écriture
-SQLite dès le début : deux demandes concurrentes sont sérialisées et la seconde
-voit la première réservation.
+La recherche de chevauchement et l'insertion se font dans la même transaction.
+Celle-ci commence par \texttt{BEGIN IMMEDIATE}, qui prend tout de suite le verrou
+d'écriture de SQLite. Si deux demandes arrivent en même temps, la seconde attend la
+fin de la première, puis voit sa réservation et la refuse.
 
-\begin{lstlisting}[language=Python,caption={\texttt{app/db.py} --- transaction \texttt{BEGIN IMMEDIATE}}]
+\begin{lstlisting}[language=Python,caption={\texttt{app/db.py} : transaction \texttt{BEGIN IMMEDIATE}}]
 def creer_engine(url: str) -> Engine:
     engine = create_engine(url, connect_args={"check_same_thread": False, "timeout": 30})
 
@@ -353,8 +350,8 @@ def test_reserver_creneau_libre_puis_conflit(client_http):
     assert seconde.json()["erreur"] == "CONFLIT_RESERVATION"
 \end{lstlisting}
 
-\paragraph{Intégration continue.} Le workflow GitHub Actions exécute la suite de
-tests à chaque \emph{push} et \emph{pull request}.
+\paragraph{Intégration continue.} GitHub Actions lance les tests à chaque
+\emph{push} et à chaque \emph{pull request}.
 
 \begin{lstlisting}[language=yaml,caption={\texttt{.github/workflows/ci.yml}}]
 name: CI
@@ -375,26 +372,26 @@ jobs:
       - run: pytest -v
 \end{lstlisting}
 
-L'application a également été vérifiée sur un serveur réel (\texttt{uvicorn}) :
-la première réservation renvoie \texttt{201}, la seconde sur le même créneau
-renvoie \texttt{409}.
+Nous avons aussi lancé l'application avec \texttt{uvicorn} et envoyé deux requêtes
+à la main : la première réservation renvoie \texttt{201}, la seconde, sur le même
+créneau, renvoie \texttt{409}.
 
 \subsection{Tag \texttt{v0.1-elaboration} et fermeture du milestone}
 
-La branche \texttt{uc2-reserver-vehicule} a été fusionnée dans \texttt{main}
-(\emph{merge} \texttt{--no-ff}, message \og Closes \#8, refs \#2 \fg{}), la suite
-de tests y passait (13 tests), puis le tag annoté \texttt{v0.1-elaboration} a été
-posé. Les milestones Lancement et Élaboration sont marqués fermés dans
-\texttt{github/milestones.md} et seront fermés sur GitHub par le script.
-\textbf{Le jalon \og architecture de base \fg{} est ainsi devenu du code exécutable.}
+Nous avons fusionné \texttt{uc2-reserver-vehicule} dans \texttt{main}
+(\emph{merge} \texttt{--no-ff}, message \og Closes \#8, refs \#2 \fg{}). Les 13
+tests passaient sur \texttt{main}, et nous avons posé le tag annoté
+\texttt{v0.1-elaboration}. Le fichier \texttt{github/milestones.md} marque les
+milestones Lancement et Élaboration comme fermés ; le script les fermera sur GitHub.
+Le jalon LCA correspond donc à du code qui s'exécute et dont les tests passent.
 
 % ===============================================================
-\section{Partie 2 -- Construction et Transition}
+\section{Partie 2 : Construction et Transition}
 % ===============================================================
 
 \subsection{Fiche UC2, diagramme de classes et diagramme de séquence}
 
-\subsubsection*{Fiche UC2 -- Réserver un véhicule}
+\subsubsection*{Fiche UC2 : Réserver un véhicule}
 
 \begin{table}[H]
 \centering
@@ -452,9 +449,10 @@ R6 & pas de chevauchement avec une réservation \texttt{CONFIRMEE} du client \\
 \end{table}
 
 \noindent Deux créneaux $a$ et $b$ se chevauchent si et seulement si
-$a.\mathit{debut} < b.\mathit{fin}$ et $b.\mathit{debut} < a.\mathit{fin}$ ;
-des créneaux contigus sont donc autorisés. Une date reçue sans fuseau horaire est
-considérée en UTC, et les réponses sont renvoyées en UTC (suffixe \texttt{Z}).
+$a.\mathit{debut} < b.\mathit{fin}$ et $b.\mathit{debut} < a.\mathit{fin}$.
+Un créneau de 10\,h à 11\,h et un créneau de 11\,h à 12\,h ne se chevauchent donc pas.
+Une date reçue sans fuseau horaire est lue en UTC, et l'API répond en UTC
+(suffixe \texttt{Z}).
 
 \subsubsection*{Diagramme de classes}
 
@@ -474,9 +472,10 @@ considérée en UTC, et les réponses sont renvoyées en UTC (suffixe \texttt{Z}
 
 \subsection{Implémentation en couches (métier et accès aux données)}
 
-\paragraph{Couche métier.} L'objet valeur \texttt{Creneau} normalise les dates en
-UTC, applique R1 et fournit le test de chevauchement ; le module \texttt{tarif}
-calcule le montant en centimes entiers (pas de nombres flottants pour l'argent).
+\paragraph{Couche métier.} L'objet valeur \texttt{Creneau} convertit les dates en
+UTC, applique R1 et sait dire si deux créneaux se chevauchent. Le module
+\texttt{tarif} calcule le montant en centimes entiers, pour éviter les erreurs
+d'arrondi des nombres flottants.
 
 \begin{lstlisting}[language=Python,caption={\texttt{app/domain/creneau.py} (extrait)}]
 @dataclass(frozen=True)
@@ -497,8 +496,9 @@ class Creneau:
 \end{lstlisting}
 
 \paragraph{Couche service.} \texttt{ReservationService} applique les règles R1 à R6
-dans l'ordre de la fiche UC. Il dépend d'une \emph{unité de travail} abstraite et
-d'une horloge injectable, ce qui le rend testable sans base de données.
+dans l'ordre de la fiche UC. Il reçoit une \emph{unité de travail} abstraite et une
+horloge : les tests unitaires lui passent des faux dépôts en mémoire et une heure
+fixe, sans base de données.
 
 \begin{lstlisting}[language=Python,caption={\texttt{app/services/reservation\_service.py} (extrait)}]
 def reserver(self, client_id, vehicule_id, debut, fin) -> Reservation:
@@ -528,8 +528,8 @@ def reserver(self, client_id, vehicule_id, debut, fin) -> Reservation:
         return reservation
 \end{lstlisting}
 
-\paragraph{Couche d'accès aux données.} Le dépôt SQL traduit la règle de
-chevauchement en une requête, en ne retenant que les réservations confirmées.
+\paragraph{Couche d'accès aux données.} Le dépôt SQL écrit la règle de
+chevauchement sous forme de requête. Les réservations annulées n'y comptent pas.
 
 \begin{lstlisting}[language=Python,caption={\texttt{app/repositories/depots.py} (extrait)}]
 def _existe_chevauchement(self, critere, creneau: Creneau) -> bool:
@@ -546,17 +546,18 @@ def _existe_chevauchement(self, critere, creneau: Creneau) -> bool:
     return self._session.scalar(requete) is not None
 \end{lstlisting}
 
-\paragraph{API.} Deux routes sont exposées : \texttt{POST /reservations}
-(201, 404, 409, 422) et \texttt{GET /reservations/\{id\}} (200, 404, 422). Les
-erreurs métier ont la forme :
+\paragraph{API.} L'API a deux routes. \texttt{POST /reservations} répond 201, 404,
+409 ou 422 ; \texttt{GET /reservations/\{id\}} répond 200, 404 ou 422. Une erreur
+métier renvoie :
 \begin{center}
 \texttt{\{"erreur": "<CODE>", "message": "..."\}}
 \end{center}
 
 \subsection{Tests unitaires et test d'intégration dérivés du scénario nominal}
 
-Tous les tests ont été écrits \emph{avant} le code (TDD : test vu en échec, puis
-implémentation minimale, puis test vu en succès).
+Nous avons travaillé en TDD : chaque test est écrit avant le code qu'il couvre.
+On le lance une première fois pour le voir échouer, puis on écrit juste assez de
+code pour qu'il passe.
 
 \begin{table}[H]
 \centering
@@ -571,7 +572,7 @@ implémentation minimale, puis test vu en succès).
 \texttt{tests/integration/test\_api\_reservations.py} & 8 & scénario nominal HTTP, erreurs, fuseaux horaires, entrées hors limites \\
 \texttt{tests/integration/test\_concurrence.py} & 1 & deux réservations simultanées : un seul succès \\
 \midrule
-\textbf{Total} & \textbf{44} & \textbf{tous verts} \\
+\textbf{Total} & \textbf{44} & tous passent \\
 \bottomrule
 \end{tabularx}
 \caption{Répartition des tests}
@@ -589,9 +590,9 @@ def test_scenario_nominal_enregistre_une_reservation_confirmee(service, uow):
     assert uow.valide
 \end{lstlisting}
 
-\paragraph{Test d'intégration du scénario nominal.} Il traverse toutes les couches
-jusqu'à une vraie base SQLite : réservation (201, montant calculé), puis
-consultation de la même réservation par \texttt{GET}.
+\paragraph{Test d'intégration du scénario nominal.} Il passe par toutes les couches
+jusqu'à une base SQLite sur disque. Le client réserve (réponse 201 avec le montant),
+puis relit la même réservation par \texttt{GET}.
 
 \begin{lstlisting}[language=Python,caption={Test d'intégration du scénario nominal}]
 def test_scenario_nominal_reserver_puis_consulter(client_http):
@@ -614,12 +615,12 @@ def test_scenario_nominal_reserver_puis_consulter(client_http):
 \end{lstlisting}
 
 \paragraph{Test de concurrence (risque technique).} Deux fils d'exécution
-réservent simultanément le même créneau, dix fois de suite : exactement un succès
-et un conflit sont attendus à chaque essai. Pour prouver que ce test protège
-réellement, \texttt{BEGIN IMMEDIATE} a été remplacé temporairement par
-\texttt{BEGIN} : le test échoue alors (\texttt{database is locked}), puis repasse
-une fois le verrou rétabli. Lors de la revue, une expérience sans verrou a produit
-une double réservation dans 27 essais sur 28.
+réservent le même créneau au même moment, dix fois de suite. À chaque essai, l'un
+doit réussir et l'autre recevoir un conflit. Pour vérifier que ce test détecte bien
+le problème, nous avons remplacé \texttt{BEGIN IMMEDIATE} par \texttt{BEGIN} : le
+test échoue (\texttt{database is locked}). Il repasse dès que le verrou est remis.
+Pendant la relecture, un essai sans verrou a donné une double réservation dans 27
+cas sur 28.
 
 \subsection{Revue croisée}
 
@@ -632,10 +633,10 @@ une double réservation dans 27 essais sur 28.
         \texttt{uc2-reserver-vehicule} $\rightarrow$ \texttt{main}.
 \end{itemize}
 
-\paragraph{Revue préalable et corrections.}
-Avant la revue par une autre équipe, une revue complète de la branche a été menée.
-Aucun défaut critique n'a été relevé ; trois défauts importants ont été corrigés,
-chacun par un test écrit d'abord en échec :
+\paragraph{Première relecture et corrections.}
+Avant la revue croisée, toute la branche a été relue. La relecture n'a trouvé aucun
+défaut critique et trois défauts importants. Nous avons corrigé chacun en écrivant
+d'abord un test qui échouait :
 
 \begin{table}[H]
 \centering
@@ -651,11 +652,11 @@ Checklist et diagramme de classes masquaient la dépendance du service vers les 
 documentation et diagramme alignés sur le code \\
 \bottomrule
 \end{tabularx}
-\caption{Corrections issues de la revue préalable}
+\caption{Corrections issues de la première relecture}
 \end{table}
 
-\noindent La revue par l'autre équipe se fait sur la \emph{pull request} et la
-grille ; ses remarques seront consignées dans le tableau de la checklist.
+\noindent L'autre équipe relit la \emph{pull request} avec la grille et note ses
+remarques dans le tableau de la checklist.
 
 % ===============================================================
 \section{\texorpdfstring{Traçabilité UC $\rightarrow$ ticket $\rightarrow$ branche $\rightarrow$ classes $\rightarrow$ tests}{Traçabilité UC, ticket, branche, classes, tests}}
@@ -668,7 +669,7 @@ grille ; ses remarques seront consignées dans le tableau de la checklist.
 \textbf{Maillon} & \textbf{Artefact pour UC2} \\
 \midrule
 UC & \texttt{docs/fiches/UC2-reserver-vehicule.md}, \texttt{docs/uml/cas-utilisation.puml} \\
-Ticket & \#2 \og UC2 --- Réserver un véhicule \fg{} (milestone Construction) ; \#8 pour l'Élaboration \\
+Ticket & \#2 pour UC2 (milestone Construction) ; \#8 pour l'Élaboration \\
 Branche & \texttt{uc2-reserver-vehicule} \\
 Classes & \texttt{docs/uml/classes-uc2.puml}, \texttt{docs/uml/sequence-uc2.puml} ; code dans \texttt{app/} \\
 Tests & \texttt{tests/unit/test\_reservation\_service.py}, \texttt{tests/integration/test\_api\_reservations.py}, \texttt{tests/integration/test\_concurrence.py} \\
@@ -681,20 +682,18 @@ Tests & \texttt{tests/unit/test\_reservation\_service.py}, \texttt{tests/integra
 branche de UC2 dans \texttt{main} : la première à la fin
 de l'Élaboration (\og Closes \#8, refs \#2 \fg{}, suivie du tag
 \texttt{v0.1-elaboration}), la seconde à la fin de la Construction de UC2
-(\og Closes \#2 \fg{}). Chaque commit de la branche fait référence au ticket \#2.
+(\og Closes \#2 \fg{}). Tous les commits de code de la branche citent le ticket
+(\og Refs \#2 \fg{}).
 
 % ===============================================================
 \section{Bilan, limites et suite}
 % ===============================================================
 
 \paragraph{Bilan.}
-\begin{itemize}
-  \item Les quatre questions de cadrage sont traitées (vision, UC, priorisation, planification).
-  \item L'Élaboration a produit une architecture de base \emph{exécutable} et testée,
-        marquée par le tag \texttt{v0.1-elaboration}.
-  \item UC2 est construit en couches, couvert par 44 tests, et le risque de double
-        réservation est maîtrisé et prouvé par un test de concurrence.
-\end{itemize}
+Le tag \texttt{v0.1-elaboration} marque une route de réservation qui fonctionne et
+dont le test passe en CI. UC2 est maintenant complet : 44 tests passent. Le test de
+concurrence échoue dès qu'on retire le verrou, ce qui montre qu'il couvre bien le
+risque de double réservation.
 
 \paragraph{Limites connues.}
 \begin{itemize}
