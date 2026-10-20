@@ -19,10 +19,12 @@
 \usepackage{enumitem}
 \usepackage{listings}
 \usepackage{amssymb}
+\usepackage{microtype}
 \usepackage[hidelinks]{hyperref}
 
 \graphicspath{{figures/}}
 \setlist{itemsep=2pt,topsep=4pt}
+\setlength{\emergencystretch}{3em}
 \newcolumntype{L}{>{\raggedright\arraybackslash}X}
 
 % Listings en noir et blanc, avec prise en charge des accents
@@ -260,9 +262,14 @@ Lancement, Élaboration, Construction, Transition. Les labels utilisés sont
 est créé par le script et reçoit tous les tickets.
 
 \paragraph{Branches.} Chaque UC possède sa branche :
-\texttt{uc1-consulter-disponibilites}, \texttt{uc2-reserver-vehicule},
-\texttt{uc3-payer-location}, \texttt{uc4-annuler-reservation},
-\texttt{uc5-restituer-vehicule}, \texttt{uc6-gerer-flotte}.
+\begin{itemize}
+  \item \texttt{uc1-consulter-disponibilites}
+  \item \texttt{uc2-reserver-vehicule}
+  \item \texttt{uc3-payer-location}
+  \item \texttt{uc4-annuler-reservation}
+  \item \texttt{uc5-restituer-vehicule}
+  \item \texttt{uc6-gerer-flotte}
+\end{itemize}
 
 \paragraph{Tags.} Les jalons de phase sont des tags Git annotés :
 \texttt{v0.0-lancement} (LCO) et \texttt{v0.1-elaboration} (LCA) sont posés ;
@@ -324,8 +331,11 @@ def creer_engine(url: str) -> Engine:
 \end{lstlisting}
 
 \paragraph{Premier test automatisé.}
-Le test d'intégration \texttt{test\_reserver\_creneau\_libre\_puis\_conflit}
-vérifie qu'un créneau libre donne \texttt{201}, puis que le même créneau demandé
+Le premier test d'intégration,
+\begin{center}
+\texttt{test\_reserver\_creneau\_libre\_puis\_conflit},
+\end{center}
+\noindent vérifie qu'un créneau libre donne \texttt{201}, puis que le même créneau demandé
 par un autre client donne \texttt{409 CONFLIT\_RESERVATION}.
 
 \begin{lstlisting}[language=Python,caption={Premier test d'intégration}]
@@ -538,7 +548,10 @@ def _existe_chevauchement(self, critere, creneau: Creneau) -> bool:
 
 \paragraph{API.} Deux routes sont exposées : \texttt{POST /reservations}
 (201, 404, 409, 422) et \texttt{GET /reservations/\{id\}} (200, 404, 422). Les
-erreurs métier ont la forme \texttt{\{"erreur": "<CODE>", "message": "..."\}}.
+erreurs métier ont la forme :
+\begin{center}
+\texttt{\{"erreur": "<CODE>", "message": "..."\}}
+\end{center}
 
 \subsection{Tests unitaires et test d'intégration dérivés du scénario nominal}
 
@@ -665,7 +678,7 @@ Tests & \texttt{tests/unit/test\_reservation\_service.py}, \texttt{tests/integra
 \end{table}
 
 \paragraph{Historique Git.} Le graphe des commits montre deux fusions de la
-branche \texttt{uc2-reserver-vehicule} dans \texttt{main} : la première à la fin
+branche de UC2 dans \texttt{main} : la première à la fin
 de l'Élaboration (\og Closes \#8, refs \#2 \fg{}, suivie du tag
 \texttt{v0.1-elaboration}), la seconde à la fin de la Construction de UC2
 (\og Closes \#2 \fg{}). Chaque commit de la branche fait référence au ticket \#2.
