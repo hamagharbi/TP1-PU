@@ -1,9 +1,10 @@
 \documentclass[11pt,a4paper]{article}
 
 % ---------------------------------------------------------------
-% Rapport TP1 -- Processus unifié et approches agiles
+% Rapport TP1 : Processus unifié et approches agiles
 % Compilation : pdflatex rapport-tp1.tex (deux passes pour la table des matières)
-% Document volontairement sans couleur.
+% Texte et mise en forme sans couleur ; seuls les logos de la page de garde
+% gardent leurs couleurs d'origine.
 % ---------------------------------------------------------------
 
 \usepackage[utf8]{inputenc}
@@ -12,6 +13,7 @@
 \usepackage{lmodern}
 \usepackage[margin=2.3cm]{geometry}
 \usepackage{graphicx}
+\usepackage[export]{adjustbox}
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{array}
@@ -57,14 +59,57 @@
   comment=[l]{\#},
 }
 
-\title{\textbf{TP1 : Processus unifié et approches agiles}\\[4pt]
-\large Système de location de vélos et trottinettes}
-\author{Équipe : \dots}
-\date{7 octobre 2026}
+\hypersetup{
+  pdftitle={Compte rendu du TP n°1 : Processus unifié et approches agiles},
+  pdfauthor={Mohamed Gharbi, Mohamed Louay Bourkhis, Soufien Hmaidi, Adem Yengui}
+}
 
 \begin{document}
 
-\maketitle
+% ---------------------------------------------------------------
+% Page de garde
+% ---------------------------------------------------------------
+\begin{titlepage}
+\centering
+\begin{minipage}[c]{0.24\textwidth}
+  \centering
+  % Le PNG d'origine a une large marge blanche : on la coupe à l'affichage.
+  \adjincludegraphics[width=\linewidth,trim={{.07\width} {.33\height} {.07\width} {.28\height}},clip]{logo-carthage.png}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.48\textwidth}
+  \centering\small
+  République Tunisienne\\
+  Ministère de l'Enseignement Supérieur\\
+  et de la Recherche Scientifique\\[2pt]
+  \textbf{Université de Carthage}\\
+  \textbf{Institut National des Sciences}\\
+  \textbf{Appliquées et de Technologie}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.20\textwidth}
+  \centering
+  \includegraphics[width=0.85\linewidth]{logo-insat.png}
+\end{minipage}
+
+\vspace{3cm}
+\rule{\textwidth}{0.6pt}\\[0.6cm]
+{\LARGE Compte rendu du TP n\textsuperscript{o}\,1}\\[0.4cm]
+{\large Système de location de vélos et de trottinettes}\\[0.5cm]
+\rule{\textwidth}{0.6pt}
+
+\vspace{1cm}
+{\large Matière : \textbf{Processus unifié et approches agiles}}\\[0.2cm]
+{\large Filière : \textbf{RT4}}
+
+\vfill
+{\large\textbf{Réalisé par :}}\\[0.4cm]
+Mohamed Gharbi\\
+Mohamed Louay Bourkhis\\
+Soufien Hmaidi\\
+Adem Yengui\\[0.4cm]
+RT4/2
+\end{titlepage}
 
 \begin{abstract}
 Nous avons choisi un système de location de vélos et de trottinettes à six cas
@@ -274,12 +319,15 @@ tous les tickets.
 
 \subsection{Diagramme de cas d'utilisation (PlantUML)}
 
-Source : \texttt{docs/uml/cas-utilisation.puml}.
+La figure~\ref{fig:cas-utilisation} montre les trois acteurs et les six UC. UC5
+inclut UC3 : rendre le véhicule déclenche le paiement. Source :
+\texttt{docs/uml/cas-utilisation.puml}.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.9\textwidth]{cas-utilisation.png}
 \caption{Diagramme de cas d'utilisation}
+\label{fig:cas-utilisation}
 \end{figure}
 
 \subsection{Architecture de base exécutable}
@@ -430,7 +478,8 @@ Déclencheur & le client choisit un véhicule (issu de UC1) et un créneau \\
   \item \textbf{6a} Le client a déjà une réservation qui chevauche $\rightarrow$ \texttt{CONFLIT\_CLIENT} (409).
 \end{itemize}
 
-\paragraph{Règles métier.}
+\paragraph{Règles métier.} Les étapes 2 à 6 du scénario appliquent les règles
+suivantes :
 \begin{table}[H]
 \centering
 \begin{tabularx}{\textwidth}{l L}
@@ -456,18 +505,28 @@ Une date reçue sans fuseau horaire est lue en UTC, et l'API répond en UTC
 
 \subsubsection*{Diagramme de classes}
 
-\begin{figure}[H]
+La figure~\ref{fig:classes-uc2} range les classes par paquetage : contrôleur,
+services, métier, accès aux données et entités persistantes. Le service ne voit
+les dépôts qu'à travers des interfaces.
+
+\begin{figure}[!htbp]
 \centering
 \includegraphics[width=\textwidth]{classes-uc2.png}
 \caption{Diagramme de classes de UC2 (\texttt{docs/uml/classes-uc2.puml})}
+\label{fig:classes-uc2}
 \end{figure}
 
 \subsubsection*{Diagramme de séquence (scénario nominal et alternative 5a)}
 
-\begin{figure}[H]
+La figure~\ref{fig:sequence-uc2} suit une réservation du \texttt{POST} jusqu'au
+\texttt{COMMIT}, puis montre l'alternative 5a : créneau déjà pris, annulation de la
+transaction et réponse 409.
+
+\begin{figure}[!htbp]
 \centering
 \includegraphics[width=\textwidth]{sequence-uc2.png}
 \caption{Diagramme de séquence de UC2 (\texttt{docs/uml/sequence-uc2.puml})}
+\label{fig:sequence-uc2}
 \end{figure}
 
 \subsection{Implémentation en couches (métier et accès aux données)}
@@ -578,7 +637,10 @@ code pour qu'il passe.
 \caption{Répartition des tests}
 \end{table}
 
-\paragraph{Test unitaire du scénario nominal.}
+\paragraph{Test unitaire du scénario nominal.} Le test appelle le service avec les
+faux dépôts et une heure fixe. Il vérifie la réservation renvoyée, son montant et
+l'appel à \texttt{valider()}.
+
 \begin{lstlisting}[language=Python,caption={Test unitaire du scénario nominal}]
 def test_scenario_nominal_enregistre_une_reservation_confirmee(service, uow):
     reservation = service.reserver(ALICE, TROTTINETTE, h(10), h(11, 30))
