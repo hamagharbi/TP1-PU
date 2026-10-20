@@ -102,24 +102,15 @@
 {\large Matière : \textbf{Processus unifié et approches agiles}}\\[0.2cm]
 {\large Filière : \textbf{RT4}}
 
-\vfill
+\vspace{2cm}
 {\large\textbf{Réalisé par :}}\\[0.4cm]
 Mohamed Gharbi\\
 Mohamed Louay Bourkhis\\
 Soufien Hmaidi\\
 Adem Yengui\\[0.4cm]
 RT4/2
+\vfill
 \end{titlepage}
-
-\begin{abstract}
-Nous avons choisi un système de location de vélos et de trottinettes à six cas
-d'utilisation (UC). Le plus risqué, \og Réserver un véhicule \fg{}, doit empêcher
-deux clients de réserver le même véhicule sur des créneaux qui se chevauchent.
-Le rapport suit l'ordre de l'énoncé. Il commence par le cadrage (vision,
-priorisation, plan des itérations). Il décrit ensuite l'Élaboration, qui se termine
-sur une première route exécutable et le tag \texttt{v0.1-elaboration}, puis la
-Construction de cet UC : diagrammes UML, code en couches, 44 tests.
-\end{abstract}
 
 \tableofcontents
 \newpage
@@ -128,10 +119,15 @@ Construction de cet UC : diagrammes UML, code en couches, 44 tests.
 \section{Choix du système}
 % ===============================================================
 
-Le système gère la location de vélos et de trottinettes en stations fixes. Il
-compte six cas d'utilisation. L'UC à risque technique est UC2, Réserver un
-véhicule : deux demandes peuvent viser le même véhicule sur des créneaux qui se
-chevauchent, parfois au même instant.
+Nous avons choisi un système de location de vélos et de trottinettes en stations
+fixes, à six cas d'utilisation (UC). Le plus risqué, UC2 \og Réserver un
+véhicule \fg{}, doit empêcher deux clients de réserver le même véhicule sur des
+créneaux qui se chevauchent, parfois au même instant.
+
+Le rapport suit l'ordre de l'énoncé. Il commence par le cadrage (vision,
+priorisation, plan des itérations). Il décrit ensuite l'Élaboration, qui se termine
+sur une première route exécutable et le tag \texttt{v0.1-elaboration}, puis la
+Construction de cet UC : diagrammes UML, code en couches, 44 tests.
 
 \paragraph{Choix techniques.}
 \begin{itemize}
@@ -686,15 +682,6 @@ cas sur 28.
 
 \subsection{Revue croisée}
 
-\paragraph{Support fourni à l'équipe relectrice.}
-\begin{itemize}
-  \item \texttt{docs/revue/checklist-revue-croisee.md} : grille couvrant la
-        traçabilité, le respect des couches, le traitement du risque de conflit et
-        la qualité, avec un tableau de remarques à compléter ;
-  \item \texttt{docs/revue/pr-uc2.md} : description de la \emph{pull request}
-        \texttt{uc2-reserver-vehicule} $\rightarrow$ \texttt{main}.
-\end{itemize}
-
 \paragraph{Première relecture et corrections.}
 Avant la revue croisée, toute la branche a été relue. La relecture n'a trouvé aucun
 défaut critique et trois défauts importants. Nous avons corrigé chacun en écrivant
@@ -717,8 +704,97 @@ documentation et diagramme alignés sur le code \\
 \caption{Corrections issues de la première relecture}
 \end{table}
 
+\paragraph{Support fourni à l'équipe relectrice.} L'autre équipe reçoit deux
+documents : la grille de relecture et la description de la \emph{pull request}
+\texttt{uc2-reserver-vehicule} $\rightarrow$ \texttt{main}. Les voici tels qu'ils
+figurent dans le dépôt (\texttt{docs/revue/}).
+
+\subsubsection*{Grille de relecture}
+
+\noindent Équipe relectrice : \rule{4cm}{0.4pt}\hfill
+Date : \rule{2.5cm}{0.4pt}\hfill
+Commit relu : \rule{2.5cm}{0.4pt}
+
+\paragraph{Traçabilité UC $\rightarrow$ ticket $\rightarrow$ branche $\rightarrow$
+classes $\rightarrow$ tests.}
+\begin{itemize}[label=$\square$]
+  \item La fiche \texttt{docs/fiches/UC2-reserver-vehicule.md} couvre le scénario
+        nominal, les alternatives 2a à 6a et les règles R1 à R6.
+  \item Chaque règle R1 à R6 a au moins un test
+        (\texttt{tests/unit/test\_reservation\_service.py}).
+  \item Le diagramme de classes correspond aux classes du code (noms, méthodes,
+        dépendances).
+  \item Le diagramme de séquence correspond à \texttt{ReservationService.reserver}.
+\end{itemize}
+
+\paragraph{Architecture en couches.}
+\begin{itemize}[label=$\square$]
+  \item Le contrôleur (\texttt{app/api}) ne contient aucune règle métier.
+  \item Le service ne dépend que des ports (\texttt{app/services/ports.py}) et des
+        entités \texttt{app/models.py} : aucune session ni requête SQLAlchemy.
+  \item Le domaine (\texttt{app/domain}) n'importe ni FastAPI ni SQLAlchemy.
+\end{itemize}
+
+\paragraph{Risque technique : conflits.}
+\begin{itemize}[label=$\square$]
+  \item La vérification du chevauchement et l'insertion sont dans la même transaction.
+  \item \texttt{BEGIN IMMEDIATE} est en place (\texttt{app/db.py}) et le test de
+        concurrence passe.
+  \item Les créneaux contigus et les réservations annulées sont correctement gérés.
+\end{itemize}
+
+\paragraph{Qualité.}
+\begin{itemize}[label=$\square$]
+  \item \texttt{pytest -v} passe en local et en CI.
+  \item Les messages d'erreur sont clairs et les codes HTTP cohérents (404, 409, 422).
+  \item Le nommage est cohérent et lisible.
+\end{itemize}
+
+\paragraph{Remarques.} À remplir par l'équipe relectrice :
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{c l L l L}
+\toprule
+\textbf{N\textsuperscript{o}} & \textbf{Fichier et ligne} & \textbf{Remarque} & \textbf{Gravité} & \textbf{Réponse de l'équipe} \\
+\midrule
+1 & & & & \rule{0pt}{0.9cm} \\
+\midrule
+2 & & & & \rule{0pt}{0.9cm} \\
+\midrule
+3 & & & & \rule{0pt}{0.9cm} \\
+\bottomrule
+\end{tabularx}
+\caption{Remarques de la revue croisée}
+\end{table}
+
+\subsubsection*{Description de la \emph{pull request}}
+
+\noindent\textbf{UC2 : Réserver un véhicule (Construction).} Closes \#2.
+
+\paragraph{Contenu.}
+\begin{itemize}
+  \item Fiche UC : \texttt{docs/fiches/UC2-reserver-vehicule.md}.
+  \item Diagrammes : \texttt{docs/uml/classes-uc2.puml},
+        \texttt{docs/uml/sequence-uc2.puml}.
+  \item Métier : \texttt{Creneau} (durée maximale 24 h, UTC), tarif en centimes,
+        erreurs métier.
+  \item Service : règles R1 à R6, méthode \texttt{obtenir}.
+  \item Accès aux données : chevauchement par véhicule et par client, transaction
+        \texttt{BEGIN IMMEDIATE}.
+  \item API : \texttt{POST /reservations}, \texttt{GET /reservations/\{id\}}.
+\end{itemize}
+
+\paragraph{Tests.}
+\begin{itemize}
+  \item Unitaires : \texttt{Creneau}, tarif, \texttt{ReservationService} (faux
+        dépôts, scénario nominal et règles R1 à R6).
+  \item Intégration : réserver puis consulter, erreurs, fuseaux horaires.
+  \item Concurrence : deux réservations simultanées donnent un succès et un conflit.
+\end{itemize}
+
 \noindent L'autre équipe relit la \emph{pull request} avec la grille et note ses
-remarques dans le tableau de la checklist.
+remarques dans le tableau prévu à cet effet.
 
 % ===============================================================
 \section{\texorpdfstring{Traçabilité UC $\rightarrow$ ticket $\rightarrow$ branche $\rightarrow$ classes $\rightarrow$ tests}{Traçabilité UC, ticket, branche, classes, tests}}
