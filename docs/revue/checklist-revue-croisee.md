@@ -1,10 +1,10 @@
-# Checklist de revue croisée — UC2 Réserver un véhicule
+# Checklist de revue croisée : UC2 Réserver un véhicule
 
 Équipe relectrice : ……………… · Date : ……………… · Commit relu : ………………
 
 ## Traçabilité UC → ticket → branche → classes → tests
-- [ ] La fiche `docs/fiches/UC2-reserver-vehicule.md` couvre scénario nominal, alternatives 2a–6a, règles R1–R6.
-- [ ] Chaque règle R1–R6 a au moins un test (`tests/unit/test_reservation_service.py`).
+- [ ] La fiche `docs/fiches/UC2-reserver-vehicule.md` couvre scénario nominal, alternatives 2a à 6a, règles R1 à R6.
+- [ ] Chaque règle R1 à R6 a au moins un test (`tests/unit/test_reservation_service.py`).
 - [ ] Le diagramme de classes correspond aux classes du code (noms, méthodes, dépendances).
 - [ ] Le diagramme de séquence correspond à `ReservationService.reserver`.
 

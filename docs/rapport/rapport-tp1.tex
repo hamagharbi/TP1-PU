@@ -270,9 +270,9 @@ Transition & fin It3 & revue croisée, recette, documentation de déploiement & 
 
 \subsection{Dépôt, tableau de bord, tickets, milestones, branches et tags}
 
-Le dépôt Git existe en local. Le script \texttt{github/setup-github.sh} le publie
-sur GitHub une fois le dépôt distant créé : il crée les milestones, les tickets et
-le tableau de bord, puis pousse les branches et les tags.
+Le dépôt est publié sur GitHub : \url{https://github.com/hamagharbi/TP1-PU}. Le
+script \texttt{github/setup-github.sh} crée les milestones, les tickets et le
+tableau de bord, puis pousse les branches et les tags.
 
 \paragraph{Tickets.} Chaque UC a son ticket (fichiers \texttt{github/issues/*.md}).
 Trois tickets de plus suivent les livrables de phase :
@@ -395,7 +395,8 @@ def test_reserver_creneau_libre_puis_conflit(client_http):
 \end{lstlisting}
 
 \paragraph{Intégration continue.} GitHub Actions lance les tests à chaque
-\emph{push} et à chaque \emph{pull request}.
+\emph{push} et à chaque \emph{pull request}. On peut aussi le lancer à la main
+depuis l'onglet Actions (\texttt{workflow\_dispatch}).
 
 \begin{lstlisting}[language=yaml,caption={\texttt{.github/workflows/ci.yml}}]
 name: CI
@@ -403,6 +404,7 @@ name: CI
 on:
   push:
   pull_request:
+  workflow_dispatch:
 
 jobs:
   tests:
@@ -426,7 +428,7 @@ Nous avons fusionné \texttt{uc2-reserver-vehicule} dans \texttt{main}
 (\emph{merge} \texttt{--no-ff}, message \og Closes \#8, refs \#2 \fg{}). Les 13
 tests passaient sur \texttt{main}, et nous avons posé le tag annoté
 \texttt{v0.1-elaboration}. Le fichier \texttt{github/milestones.md} marque les
-milestones Lancement et Élaboration comme fermés ; le script les fermera sur GitHub.
+milestones Lancement et Élaboration comme fermés, et ils le sont aussi sur GitHub.
 Le jalon LCA correspond donc à du code qui s'exécute et dont les tests passent.
 
 % ===============================================================
@@ -793,8 +795,10 @@ classes $\rightarrow$ tests.}
   \item Concurrence : deux réservations simultanées donnent un succès et un conflit.
 \end{itemize}
 
-\noindent L'autre équipe relit la \emph{pull request} avec la grille et note ses
-remarques dans le tableau prévu à cet effet.
+\noindent UC2 étant déjà fusionné dans \texttt{main}, l'autre équipe relit les
+changements depuis le lancement,
+\url{https://github.com/hamagharbi/TP1-PU/compare/v0.0-lancement...main}, avec la
+grille, et note ses remarques dans le tableau prévu à cet effet.
 
 % ===============================================================
 \section{\texorpdfstring{Traçabilité UC $\rightarrow$ ticket $\rightarrow$ branche $\rightarrow$ classes $\rightarrow$ tests}{Traçabilité UC, ticket, branche, classes, tests}}
@@ -828,8 +832,10 @@ de l'Élaboration (\og Closes \#8, refs \#2 \fg{}, suivie du tag
 % ===============================================================
 
 \paragraph{Bilan.}
-Le tag \texttt{v0.1-elaboration} marque une route de réservation qui fonctionne et
-dont le test passe en CI. UC2 est maintenant complet : 44 tests passent. Le test de
+Le tag \texttt{v0.1-elaboration} marque une route de réservation qui fonctionne,
+avec son test d'intégration. UC2 est maintenant complet. Sur GitHub, la CI exécute
+les 44 tests sur \texttt{main} et ils passent :
+\url{https://github.com/hamagharbi/TP1-PU/actions/runs/39582147794}. Le test de
 concurrence échoue dès qu'on retire le verrou, ce qui montre qu'il couvre bien le
 risque de double réservation.
 
@@ -844,10 +850,8 @@ risque de double réservation.
 \end{itemize}
 
 \paragraph{Suite.}
-Publication sur GitHub (dépôt, tickets, milestones, tableau de bord, branches et
-tags), exécution de la CI, revue croisée par une autre équipe, puis UC3 et UC5
-(It2), UC4 et UC6 (It3), et pose des tags \texttt{v0.2-construction} et
-\texttt{v1.0-transition}.
+Revue croisée par une autre équipe (ticket \#9), puis UC3 et UC5 (It2), UC4 et UC6
+(It3), et pose des tags \texttt{v0.2-construction} et \texttt{v1.0-transition}.
 
 \appendix
 
@@ -855,17 +859,15 @@ tags), exécution de la CI, revue croisée par une autre équipe, puis UC3 et UC
 \section{Commandes utiles}
 % ===============================================================
 
-\begin{lstlisting}[language=bash,numbers=none,caption={Installation, lancement et tests}]
+\begin{lstlisting}[language=bash,numbers=none,caption={Installation, lancement, tests et publication sur GitHub}]
 python -m venv .venv
 .venv/Scripts/python -m pip install -r requirements.txt
 .venv/Scripts/python -m app.seed
 .venv/Scripts/python -m uvicorn app.main:creer_app --factory --reload
 .venv/Scripts/python -m pytest -v
-\end{lstlisting}
 
-\begin{lstlisting}[language=bash,numbers=none,caption={Publication sur GitHub}]
-git remote add origin <url>
-bash github/setup-github.sh <owner>/<repo>
+git remote add origin https://github.com/hamagharbi/TP1-PU.git
+bash github/setup-github.sh hamagharbi/TP1-PU
 \end{lstlisting}
 
 \end{document}
