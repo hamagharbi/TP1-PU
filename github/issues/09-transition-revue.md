@@ -1,4 +1,4 @@
-# Transition — revue croisée et livraison
+# Transition : revue croisée et livraison
 Milestone: Transition
 Labels: phase
 

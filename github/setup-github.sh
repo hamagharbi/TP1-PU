@@ -18,7 +18,7 @@ gh label create cas-utilisation --repo "$REPO" --color 1D76DB --force
 gh label create risque-technique --repo "$REPO" --color D93F0B --force
 gh label create phase --repo "$REPO" --color 5319E7 --force
 
-PROJECT=$(gh project create --owner "$OWNER" --title "Location vélos — TP1" --format json --jq .number)
+PROJECT=$(gh project create --owner "$OWNER" --title "TP1 Location de vélos" --format json --jq .number)
 
 # Ordre important : UC1..UC6 = #1..#6, puis #7 Lancement, #8 Élaboration, #9 Transition.
 for f in "$DIR"/issues/*.md; do
