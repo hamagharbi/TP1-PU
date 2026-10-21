@@ -10,8 +10,12 @@ REPO="${1:?usage: setup-github.sh <owner>/<repo>}"
 OWNER="${REPO%%/*}"
 DIR="$(cd "$(dirname "$0")" && pwd)"
 
+# Un milestone déjà présent (essai précédent interrompu) n'est pas recréé.
+EXISTANTS=$(gh api "repos/$REPO/milestones?state=all" --jq '.[].title')
 for m in "Lancement" "Élaboration" "Construction" "Transition"; do
-  gh api "repos/$REPO/milestones" -f title="$m" >/dev/null
+  if ! grep -qxF "$m" <<< "$EXISTANTS"; then
+    gh api "repos/$REPO/milestones" -f title="$m" >/dev/null
+  fi
 done
 
 gh label create cas-utilisation --repo "$REPO" --color 1D76DB --force
