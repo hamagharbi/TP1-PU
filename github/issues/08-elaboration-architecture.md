@@ -1,4 +1,4 @@
-# Élaboration — architecture de base exécutable (UC2)
+# Élaboration : architecture de base exécutable (UC2)
 Milestone: Élaboration
 Labels: phase, risque-technique
 

@@ -1,4 +1,4 @@
-# Lancement — vision, UC, priorisation, plan
+# Lancement : vision, UC, priorisation, plan
 Milestone: Lancement
 Labels: phase
 
