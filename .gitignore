@@ -8,5 +8,5 @@ __pycache__/
 *.toc
 *.out
 *.synctex.gz
+docs/superpowers/
 .superpowers/
-.docs/
