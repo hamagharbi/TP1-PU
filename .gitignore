@@ -9,4 +9,4 @@ __pycache__/
 *.out
 *.synctex.gz
 .superpowers/
-docs/
+.docs/
