@@ -1,0 +1,82 @@
+@startuml 2tup-y
+!pragma layout smetana
+skinparam defaultTextAlignment center
+skinparam rectangle {
+  RoundCorner 0
+}
+title Processus en Y (2TUP) : location de vélos et de trottinettes
+
+rectangle etude [
+**Étude préliminaire**
+----
+Vision en 5 lignes, acteurs
+docs/01-vision.md
+]
+
+rectangle cbf [
+**Capture des besoins fonctionnels**
+----
+6 UC, priorisation
+diagramme de cas d'utilisation
+]
+
+rectangle ana [
+**Analyse**
+----
+Fiche UC2
+scénarios et règles R1 à R6
+]
+
+rectangle cbt [
+**Capture des besoins techniques**
+----
+Concurrence, plateforme, sécurité,
+intégration, données
+]
+
+rectangle cg [
+**Conception générique**
+----
+Architecture en couches
+BEGIN IMMEDIATE, GitHub Actions
+]
+
+rectangle fusion [
+**Conception préliminaire**
+**(fusion des deux branches)**
+----
+Route POST /reservations de bout en bout
+tag v0.1-elaboration
+]
+
+rectangle cd [
+**Conception détaillée**
+----
+Diagrammes de classes
+et de séquence UC2
+]
+
+rectangle code [
+**Codage et tests**
+----
+Code en couches, 44 tests
+CI GitHub Actions
+]
+
+rectangle recette [
+**Recette**
+----
+Revue croisée
+grille et ticket #9
+]
+
+etude --> cbf : branche fonctionnelle
+etude --> cbt : branche technique
+cbf --> ana
+cbt --> cg
+ana --> fusion
+cg --> fusion
+fusion --> cd
+cd --> code
+code --> recette
+@enduml

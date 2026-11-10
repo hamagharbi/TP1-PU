@@ -853,6 +853,114 @@ risque de double réservation.
 Revue croisée par une autre équipe (ticket \#9), puis UC3 et UC5 (It2), UC4 et UC6
 (It3), et pose des tags \texttt{v0.2-construction} et \texttt{v1.0-transition}.
 
+\clearpage
+% ===============================================================
+\section{Partie 3 : démarche 2TUP}
+% ===============================================================
+
+Le 2TUP (\emph{2 Tracks Unified Process}) mène deux branches en parallèle : une
+branche fonctionnelle, qui décrit ce que le système doit faire, et une branche
+technique, qui décrit avec quoi et sous quelles contraintes il le fait. Les deux
+branches se rejoignent en conception préliminaire, puis la réalisation continue sur
+une seule branche. Cette partie relit le TP1 avec cette grille.
+
+\subsection{Exigences fonctionnelles et techniques}
+
+Les exigences ci-dessous viennent toutes du TP1 : des UC, de la fiche UC2 et des
+choix faits pendant l'Élaboration.
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{L L}
+\toprule
+\textbf{Exigences fonctionnelles} & \textbf{Exigences techniques} \\
+\midrule
+F1. Réserver un véhicule sur un créneau, sans chevauchement avec une autre
+réservation (UC2). &
+T1. Concurrence : si deux clients réservent le même créneau au même moment, une
+seule demande réussit (transaction \texttt{BEGIN IMMEDIATE}, test de concurrence). \\
+\midrule
+F2. Consulter les véhicules libres d'une station sur un créneau (UC1). &
+T2. Performance : répondre en moins de 200 ms en charge nominale. C'est l'objectif
+de la fiche UC2 ; il n'a pas encore été mesuré. \\
+\midrule
+F3. Payer la location (UC3). &
+T3. Plateforme : API web en Python 3.13 avec FastAPI et une base SQLite. Les tests
+tournent sous Windows en local et sous Linux dans la CI. \\
+\midrule
+F4. Annuler une réservation, ce qui libère le créneau (UC4). &
+T4. Sécurité : les entrées sont validées (identifiants bornés, dates hors limites
+refusées avec une réponse 422). L'authentification du client reste à ajouter : elle
+était hors périmètre du TP1. \\
+\midrule
+F5. Restituer le véhicule et calculer le prix final (UC5). &
+T5. Intégration : dialoguer avec la passerelle de paiement externe, simulée dans ce
+TP (UC3). GitHub Actions lance les tests à chaque \emph{push}. \\
+\midrule
+F6. Gérer la flotte : ajouter, retirer ou mettre en maintenance un véhicule (UC6). &
+T6. Données : dates stockées et renvoyées en UTC, montants en centimes entiers. \\
+\midrule
+F7. Estimer le montant à la réservation : 2 euros par heure pour un vélo, 3 euros
+pour une trottinette, toute heure entamée étant due. & \\
+\bottomrule
+\end{tabularx}
+\caption{Exigences fonctionnelles et techniques}
+\label{tab:exigences}
+\end{table}
+
+\subsection{Le Y du projet}
+
+La figure~\ref{fig:2tup-y} place les livrables du TP1 sur le Y. La vision occupe
+l'étude préliminaire, au sommet. La branche gauche porte les UC, leur priorisation,
+puis l'analyse de UC2 (fiche, règles R1 à R6). La branche droite porte les
+exigences techniques du tableau~\ref{tab:exigences}, puis la conception générique :
+l'architecture en couches, la transaction \texttt{BEGIN IMMEDIATE} et la CI.
+
+Les deux branches se rejoignent en conception préliminaire, sur la route
+\texttt{POST /reservations}. Cette route met le modèle de UC2, venu de la branche
+fonctionnelle, dans l'architecture venue de la branche technique. Le tag
+\texttt{v0.1-elaboration} marque ce point de fusion. Sous la fusion viennent les
+diagrammes de classes et de séquence, le code, les 44 tests, puis la revue croisée.
+Source : \texttt{docs/uml/2tup-y.puml}.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.72\textwidth]{2tup-y.png}
+\caption{Le Y du projet (2TUP) et les livrables du TP1}
+\label{fig:2tup-y}
+\end{figure}
+
+\subsection{Questions}
+
+\paragraph{Quelle contrainte technique a influencé le choix de l'UC à risque ?}
+Plusieurs clients utilisent la même API au même moment, et toutes les réservations
+passent par une seule base SQLite, qui verrouille la base entière pour écrire.
+Sans précaution, deux demandes peuvent lire \og créneau libre\fg{} au même instant puis
+enregistrer toutes les deux : un essai sans verrou a donné une double réservation
+dans 27 cas sur 28. C'est ce risque qui a fait passer UC2 en premier et qui a imposé
+la transaction \texttt{BEGIN IMMEDIATE} dès l'Élaboration.
+
+\paragraph{Qu'aurions-nous changé avec une application mobile hors ligne ?}
+Le serveur ne pourrait plus refuser un conflit au moment de la réservation, puisque
+le téléphone n'est pas toujours connecté. Nous aurions changé quatre choses :
+\begin{itemize}
+  \item UC2 deviendrait une réservation provisoire, enregistrée dans une base locale
+        du téléphone, puis confirmée ou refusée par le serveur à la synchronisation.
+  \item Une file de synchronisation enverrait les demandes à la reconnexion. Chaque
+        demande porterait un identifiant unique, pour qu'un renvoi ne crée pas de
+        doublon.
+  \item La règle de résolution serait simple : la première demande arrivée au
+        serveur gagne, et le client dont la demande est refusée reçoit une
+        notification.
+  \item L'UC à risque deviendrait la synchronisation et la gestion des conflits.
+        Elle passerait en premier en Élaboration, avec des tests de reconnexion et
+        de demandes en conflit.
+\end{itemize}
+Sur le Y, c'est surtout la branche technique qui changerait : la capture des
+besoins techniques ajouterait le hors-ligne, et la conception générique la base
+locale et la synchronisation. La branche fonctionnelle ne gagnerait qu'un statut
+de réservation de plus.
+
 \appendix
 
 % ===============================================================

@@ -8,7 +8,7 @@ Petit système de location (6 cas d'utilisation) développé selon le Processus 
 - [Cas d'utilisation et priorisation](docs/02-cas-utilisation.md)
 - [Plan des itérations, phases et jalons](docs/03-plan-iterations.md)
 - [Fiche UC2 Réserver un véhicule](docs/fiches/UC2-reserver-vehicule.md)
-- Diagrammes UML : [cas d'utilisation](docs/uml/cas-utilisation.puml), [classes UC2](docs/uml/classes-uc2.puml), [séquence UC2](docs/uml/sequence-uc2.puml)
+- Diagrammes UML : [cas d'utilisation](docs/uml/cas-utilisation.puml), [classes UC2](docs/uml/classes-uc2.puml), [séquence UC2](docs/uml/sequence-uc2.puml), [Y du projet (2TUP)](docs/uml/2tup-y.puml)
 - [Checklist de revue croisée](docs/revue/checklist-revue-croisee.md)
 
 ## Lancer l'application
